@@ -68,9 +68,11 @@
        tree
      ];
      hashedPassword = "$y$j9T$8G6FkTrQPMjvhvdb7tNYQ.$TTrwjKLcqgwuysGIw9CruFm/sw6xGtTEn7fjklj2no1";
-     
+     openssh.authorizedKeys.keys=[
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJYFcLnKJYl2fzFrQhIXmECSSJBWdp/dXwjiI1XUfmrs pozender@MacBook-Air-de-florian.local"
+     ];
    };
-
+  uses.users.root.openssh.authorizedKeys.keys = [ "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJYFcLnKJYl2fzFrQhIXmECSSJBWdp/dXwjiI1XUfmrs pozender@MacBook-Air-de-florian.local" ]
   # programs.firefox.enable = true;
    virtualisation.docker.enable = true;
   # List packages installed in system profile. To search, run:
