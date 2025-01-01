@@ -9,7 +9,7 @@
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
       ./disk-config.nix
-      # ./docker-containers.nix
+      ./docker-containers.nix
     ];
 
   # Use the systemd-boot EFI boot loader.
@@ -94,6 +94,7 @@
      git
      neovim
      curl
+     jellyfin
    ];
 
   # Some programs need SUID wrappers, can be configured further or are
@@ -119,15 +120,24 @@
   # networking.firewall.allowedUDPPorts = [ ... ];
   # Or disable the firewall altogether.
    networking.firewall.enable = false;
-  
-#   networking.interfaces.enp3s0 = {
-#   ipv4.addresses = [ {
-#     address = "192.168.1.167";    # Adresse IP statique
-#     netmask = "255.255.255.0";    # Masque de sous-réseau
-#   }];
-#     # Passerelle, généralement l'adresse du routeur
-# };
-#   networking.defaultGateway = "192.168.1.254";
+ ## Jelly FIN ###
+  services.jellyfin.enable = true;
+### Jellyfin ###
+ 
+  networking = {
+   useDHCP = false;
+   interfaces = {
+     "enp3s0" = {
+       ipv4.addresses = [{
+	  address = "192.168.1.167";
+	  prefixLength = 24;
+          }];
+        };
+
+   };
+   defaultGateway = "192.168.1.254";
+   nameservers = ["192.168.1.254" "8.8.8.8" "8.8.4.4"];
+  }; 
 
   # Copy the NixOS configuration file and link it from the resulting system
   # (/run/current-system/configuration.nix). This is useful in case you

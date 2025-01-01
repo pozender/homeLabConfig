@@ -1,34 +1,44 @@
 { config, pkgs, ... }:
 
 {
-  # Enable Docker service
-  virtualisation.docker.enable = true;
-
-  # Enable and configure Docker container for Portainer
-  systemd.services.portainer = {
-    description = "Portainer - Docker UI";
-    after = [ "docker.service" ];
-    # Ensure Portainer is pulled and started as a Docker container
-    serviceConfig = {
-      ExecStart = "${pkgs.docker}/bin/docker run --name portainer -d \
-                     -p 9000:9000 \
-                     -v /var/run/docker.sock:/var/run/docker.sock \
-                     -v portainer_data:/data \
-                     portainer/portainer-ce";
-      Restart = "always";
+  virtualisation.oci-containers = {
+    backend = "docker";
+    containers = {
+      portainer = {
+        image = "portainer/portainer-ce";
+        volumes = [
+          "/var/run/docker.sock:/var/run/docker.sock"
+          "portainer_data:/data"
+        ];
+        ports = [
+          "9443:9443"
+          "8000:8000"
+        ];
+        autoStart = true;
+      };
+      qbitorrent = {
+        image = "lscr.io/linuxserver/qbittorrent:latest";
+        volumes = [
+          "/home/docker_containers/config/qbittorrent:/config"
+          "/home/shares/public/medias1:/downloads"
+          "/home/shares/public/medias1/films:/films"
+          "/home/shares/public/medias1/series:/series"
+        ];
+        environment = {
+          PUID = "1000";
+          PGID = "1000";
+          TZ = "Etc/UTC";
+          WEBUI_PORT = "8080";
+          TORRENTING_PORT = "6881";
+        };
+        ports = [
+          "8080:8080"
+          "6881:6881"
+          "6881:6881/udp"
+        ];
+        autoStart = true;
+      };
     };
-    wantedBy = [ "multi-user.target" ];
   };
-
-  # Enable Portainer data volume (for persistence)
-  virtualisation.docker.extraVolumes = [
-    {
-      name = "portainer_data";
-      driver = "local";
-    }
-  ];
-
-  # Make sure Docker is started on boot
-  services.docker.enable = true;
-  systemd.services.docker.restartIfChanged = true;
 }
+
