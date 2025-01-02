@@ -10,6 +10,7 @@
       ./hardware-configuration.nix
       ./disk-config.nix
       ./docker-containers.nix
+      # ./medias.nix
     ];
 
   # Use the systemd-boot EFI boot loader.
@@ -86,6 +87,7 @@
   virtualisation.docker.enable = true;
   # List packages installed in system profile. To search, run:
   # $ nix search wget
+   nixpkgs.config.allowUnfree = true;
    environment.systemPackages = with pkgs; [
      vim 
      wget
@@ -95,6 +97,7 @@
      neovim
      curl
      jellyfin
+     plex
    ];
 
   # Some programs need SUID wrappers, can be configured further or are
@@ -120,10 +123,26 @@
   # networking.firewall.allowedUDPPorts = [ ... ];
   # Or disable the firewall altogether.
    networking.firewall.enable = false;
- ## Jelly FIN ###
-  services.jellyfin.enable = true;
-### Jellyfin ###
- 
+
+  ## Jellyfin Service ###
+  services.jellyfin = {
+    user = "jellyfin";
+    enable = true;
+    
+  };
+  ### Jellyfin ###
+
+  ### Plex Service ###
+  services.plex = {
+    user = "plex";
+    enable = true;
+    
+  };
+  ### Plex ###
+
+  ### Group Media ###
+  users.groups.media.members = ["pozender" "plex" "jellyfin"];
+
   networking = {
    useDHCP = false;
    interfaces = {
