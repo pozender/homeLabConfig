@@ -26,7 +26,7 @@
         ];
         environment = {
           PUID = "1000";
-          PGID = "1000";
+          PGID = "9920";
           TZ = "Etc/UTC";
           WEBUI_PORT = "8080";
           TORRENTING_PORT = "6881";
@@ -37,6 +37,29 @@
           "6881:6881/udp"
         ];
         autoStart = true;
+      };
+    plex = {
+     image = "lscr.io/linuxserver/plex:latest";
+     volumes = [
+     "/home/docker_containers/config/plex:/config"
+     "/home/shares/public/medias1/films:/films"
+     "/home/shares/public/medias1/series:/series"
+     ];
+     environment = {
+       PUID = "1000";
+       PGID = "9920";
+       TZ = "Etc/UTC";
+       VERSION = "docker";
+     };
+     extraOptions = ["--network=host"];
+     autoStart = true;
+     };
+
+   autoremovetracker = {
+      image = "./autoremovetracker.tar";
+      environmentFiles = [./rmtracker.env];
+      dependsOn = ["qbitorrent"];
+      autoStart = true;
       };
     };
   };

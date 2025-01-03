@@ -90,6 +90,7 @@
    nixpkgs.config.allowUnfree = true;
    environment.systemPackages = with pkgs; [
      vim 
+     exfat
      wget
      docker-compose
      nmap
@@ -97,7 +98,6 @@
      neovim
      curl
      jellyfin
-     plex
    ];
 
   # Some programs need SUID wrappers, can be configured further or are
@@ -132,16 +132,8 @@
   };
   ### Jellyfin ###
 
-  ### Plex Service ###
-  services.plex = {
-    user = "plex";
-    enable = true;
-    
-  };
-  ### Plex ###
-
   ### Group Media ###
-  users.groups.media.members = ["pozender" "plex" "jellyfin"];
+  users.groups.media.members = [ "pozender" "jellyfin" ];
 
   networking = {
    useDHCP = false;
@@ -154,8 +146,8 @@
         };
 
    };
-   defaultGateway = "192.168.1.254";
-   nameservers = ["192.168.1.254" "8.8.8.8" "8.8.4.4"];
+   defaultGateway = "192.168.1.1";
+   nameservers = [ "8.8.8.8" "8.8.4.4"];
   }; 
 
   # Copy the NixOS configuration file and link it from the resulting system
