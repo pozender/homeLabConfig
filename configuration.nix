@@ -10,6 +10,7 @@
       ./hardware-configuration.nix
       ./disk-config.nix
       ./docker-containers.nix
+      ./docker-containers/docker-compose.nix
       # ./medias.nix
     ];
 
@@ -98,6 +99,7 @@
      neovim
      curl
      jellyfin
+     compose2nix
    ];
 
   # Some programs need SUID wrappers, can be configured further or are

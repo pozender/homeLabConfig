@@ -1,0 +1,113 @@
+
+services:
+  qbittorrent:
+    image: lscr.io/linuxserver/qbittorrent:latest
+    container_name: qbittorrent
+    environment:
+      - PUID=1000
+      - PGID=992
+      - TZ=Etc/UTC
+      - WEBUI_PORT=8080
+      - TORRENTING_PORT=6881
+    volumes:
+      - /home/docker_containers/config:/config
+      - /home/shares/public/medias1:/downloads # optional
+      - /home/shares/public/medias1/films:/films
+      - /home/shares/public/medias1/series:/series
+    ports:
+      - 8080:8080
+      - 6881:6881
+      - 6881:6881/udp
+    restart: unless-stopped
+    networks:
+      - qbittorrent_net
+    extra_hosts:
+      - "host.docker.internal:host-gateway" # Ensure proper resolution for container-to-host communication
+
+  rmtracker:
+    build:
+      context: /home/pozender/rmtracker
+    container_name: rmtracker
+    depends_on:
+      - qbittorrent
+    environment:
+      - HOST=qbittorrent
+      - USER=admin
+      - PASSWD=pass
+    restart: unless-stopped
+    networks:
+      - qbittorrent_net
+
+  prowlarr:
+    image: lscr.io/linuxserver/prowlarr:latest
+    container_name: prowlarr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+    volumes:
+      - /home/docker_containers/prowlarr/config:/config
+    ports:
+      - 9696:9696
+    restart: unless-stopped
+    networks:
+      - qbittorrent_net
+    extra_hosts:
+      - "host.docker.internal:host-gateway" 
+
+  radarr:
+    image: lscr.io/linuxserver/radarr:latest
+    container_name: radarr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+    volumes:
+      - /home/shares/public/medias1/films:/movies #optional
+      - /home/docker_containers/radarr/config:/config
+      - /home/shares/public/medias1:/downloads # optional
+
+    ports:
+      - 7878:7878
+    restart: unless-stopped
+    networks:
+      - qbittorrent_net
+    extra_hosts:
+      - "host.docker.internal:host-gateway" 
+
+  sonarr:
+    image: lscr.io/linuxserver/sonarr:latest
+    container_name: sonarr
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+    volumes:
+      - /home/shares/public/medias1/series:/tv #optional
+      - /home/docker_containers/sonarr/config:/config
+      - /home/shares/public/medias1:/downloads # optional
+    ports:
+      - 8989:8989
+    restart: unless-stopped
+    networks:
+      - qbittorrent_net
+    extra_hosts:
+      - "host.docker.internal:host-gateway" 
+  plex:
+    image: lscr.io/linuxserver/plex:latest
+    container_name: plex
+    network_mode: host
+    volumes:
+      - /home/docker_containers/config/plex:/config
+      - /home/shares/public/medias1/films:/films
+      - /home/shares/public/medias1/series:/series
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Paris
+      - VERSION=docker
+
+networks:
+  qbittorrent_net:
+    driver: bridge
+
