@@ -9,8 +9,8 @@
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
       ./disk-config.nix
-      ./docker-containers.nix
-      ./docker-containers/docker-compose.nix
+      # ./docker-containers.nix
+      # ./docker-containers/docker-compose.nix
       # ./medias.nix
     ];
 
@@ -133,6 +133,17 @@
     
   };
   ### Jellyfin ###
+
+  ### Docker-compose strating ###
+  systemd.services.dockers-services = {
+    script = ''
+      ${pkgs.docker-compose}/bin/docker-compose -f /home/nixos/docker-containers/docker-compose.yml up -d
+    '';
+    wanted = [ "multi-user.target" ];
+    after = [ "docker.service" "docker.socket" ];
+  };
+  ### Docker-compose strating ###
+
 
   ### Group Media ###
   users.groups.media.members = [ "pozender" "jellyfin" ];

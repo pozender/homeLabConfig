@@ -1,4 +1,3 @@
-
 services:
   qbittorrent:
     image: lscr.io/linuxserver/qbittorrent:latest
@@ -26,14 +25,14 @@ services:
 
   rmtracker:
     build:
-      context: /home/pozender/rmtracker
+      context: /home/etc/nixos/rmtracker
     container_name: rmtracker
     depends_on:
       - qbittorrent
     environment:
       - HOST=qbittorrent
       - USER=admin
-      - PASSWD=pass
+    env_file: "/home/etc/nixos/docker-containers/rmtracker.env"
     restart: unless-stopped
     networks:
       - qbittorrent_net
@@ -53,7 +52,7 @@ services:
     networks:
       - qbittorrent_net
     extra_hosts:
-      - "host.docker.internal:host-gateway" 
+      - "host.docker.internal:host-gateway"
 
   radarr:
     image: lscr.io/linuxserver/radarr:latest
@@ -73,7 +72,7 @@ services:
     networks:
       - qbittorrent_net
     extra_hosts:
-      - "host.docker.internal:host-gateway" 
+      - "host.docker.internal:host-gateway"
 
   sonarr:
     image: lscr.io/linuxserver/sonarr:latest
@@ -92,7 +91,7 @@ services:
     networks:
       - qbittorrent_net
     extra_hosts:
-      - "host.docker.internal:host-gateway" 
+      - "host.docker.internal:host-gateway"
   plex:
     image: lscr.io/linuxserver/plex:latest
     container_name: plex
@@ -110,4 +109,3 @@ services:
 networks:
   qbittorrent_net:
     driver: bridge
-
