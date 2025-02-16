@@ -32,7 +32,7 @@ services:
     environment:
       - HOST=qbittorrent
       - USER=admin
-    env_file: "/home/etc/nixos/docker-containers/rmtracker.env"
+    env_file: "./rmtracker.env"
     restart: unless-stopped
     networks:
       - qbittorrent_net

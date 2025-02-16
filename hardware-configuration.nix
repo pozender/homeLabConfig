@@ -8,77 +8,17 @@
     [ (modulesPath + "/installer/scan/not-detected.nix")
     ];
 
-  boot.initrd.availableKernelModules = [ "ahci" "xhci_pci" "usb_storage" "uas" "ums_realtek" "sd_mod" "sr_mod" ];
+  boot.initrd.availableKernelModules = [ "ahci" "xhci_pci" "usb_storage" "uas" "usbhid" "ums_realtek" "sd_mod" "sr_mod" ];
   boot.initrd.kernelModules = [ "dm-snapshot" ];
   boot.kernelModules = [ "kvm-intel" ];
   boot.extraModulePackages = [ ];
-
-  
-  fileSystems."/" = {
-    device = lib.mkForce "/dev/disk/by-uuid/09295d2a-547e-4ac3-b535-d53bba2987e3";
-    fsType = "ext4";
-  };
-
-
-
-  fileSystems."/boot" =
-    { device = lib.mkForce "/dev/disk/by-uuid/AE85-D38F";
-      fsType = "vfat";
-      options = [ "fmask=0022" "dmask=0022" ];
-    };
-
-  fileSystems."/var/lib/docker/overlay2/44de8466d4916e518c62d3c520b7f244b96c762e9264881914918bd5c805844b/merged" =
-    { device = "overlay";
-      fsType = "overlay";
-    };
-
-  fileSystems."/var/lib/docker/overlay2/eba1b3357e498bb0b03364a16d1641ccae0ec0300b8eedaf9c7edf55bf72c4eb/merged" =
-    { device = "overlay";
-      fsType = "overlay";
-    };
-
-   fileSystems."/var/lib/docker/overlay2/ad9b8a4899e443e2335a7846c5ce03374ae5a7d19d8580f1a390b624649175cd/merged" =
-    { device = "overlay";
-      fsType = "overlay";
-    };
-
-  fileSystems."/var/lib/docker/overlay2/be5194b38a6e0d28f6b61469e3ad42f83f547dd020ae2abed0e3d3652f8d3144/merged" =
-    { device = "overlay";
-      fsType = "overlay";
-    };
-
-  fileSystems."/var/lib/docker/overlay2/e4b124913e81390dd8706c4d1457f60414dfddc3bdd89a9f96d4951a82aec77b/merged" =
-    { device = "overlay";
-      fsType = "overlay";
-    };
-
-  fileSystems."/var/lib/docker/overlay2/5cd99db2d20f4b0a8136f7d7cacf53c4d1943013051459c55c0cc2cb71a4ee48/merged" =
-    { device = "overlay";
-      fsType = "overlay";
-    };
-
-  fileSystems."/var/lib/docker/overlay2/2eac9aee62945c6a0b421c46a0af8ec816c829a3c53685dd633cd8397300deb7/merged" =
-    { device = "overlay";
-      fsType = "overlay";
-    };
-
-  swapDevices = [ ];
 
   # Enables DHCP on each ethernet and wireless interface. In case of scripted networking
   # (the default) this is the recommended approach. When using systemd-networkd it's
   # still possible to use this option, but it's recommended to use it in conjunction
   # with explicit per-interface declarations with `networking.interfaces.<interface>.useDHCP`.
   networking.useDHCP = lib.mkDefault true;
-  # networking.interfaces.br-988db0416cfc.useDHCP = lib.mkDefault true;
-  # networking.interfaces.br-f126efb153b1.useDHCP = lib.mkDefault true;
-  # networking.interfaces.docker0.useDHCP = lib.mkDefault true;
   # networking.interfaces.enp3s0.useDHCP = lib.mkDefault true;
-  # networking.interfaces.veth1331046.useDHCP = lib.mkDefault true;
-  # networking.interfaces.veth1f27d43.useDHCP = lib.mkDefault true;
-  # networking.interfaces.veth5edc627.useDHCP = lib.mkDefault true;
-  # networking.interfaces.veth97e7edc.useDHCP = lib.mkDefault true;
-  # networking.interfaces.veth9c06e72.useDHCP = lib.mkDefault true;
-  # networking.interfaces.vethbf9de16.useDHCP = lib.mkDefault true;
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
   hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
