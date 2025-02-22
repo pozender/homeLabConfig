@@ -162,6 +162,20 @@
    defaultGateway = "192.168.1.1";
    nameservers = [ "8.8.8.8" "8.8.4.4"];
   }; 
+  
+  ## Mounting FS ##
+  fileSystems."/home/shares/public/medias1" = {
+    device = "/dev/disk/by-uuid/dab8db95-59d5-4e46-bea4-22eba9ea419f";
+    fsType = "ext4";
+    options = [ # If you don't have this options attribute, it'll default to "defaults" 
+      # boot options for fstab. Search up fstab mount options you can use
+      "users" # Allows any user to mount and unmount
+      "nofail" # Prevent system from failing if this drive doesn't mount
+
+    ];
+  };
+  ## Mounting FS ##
+
 
   # Copy the NixOS configuration file and link it from the resulting system
   # (/run/current-system/configuration.nix). This is useful in case you
