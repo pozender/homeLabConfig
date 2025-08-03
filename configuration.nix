@@ -9,20 +9,18 @@
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
       ./disk-config.nix
-      # ./docker-containers.nix
-      # ./docker-containers/docker-compose.nix
-      # ./medias.nix
     ];
 
   # Use the systemd-boot EFI boot loader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
-   networking.hostName = "nixos"; # Define your hostname.
+  networking.hostName = "nixos"; # Define your hostname.
   # Pick only one of the below networking options.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
-  networking.networkmanager.enable = true;  # Easiest to use and most distros use this by default.
-  nix.settings.experimental-features = [ "nix-command" "flakes" ];
+   networking.networkmanager.enable = true;  # Easiest to use and most distros use this by default.
+   nix.settings.experimental-features = [ "nix-command" "flakes" ];
+
   # Set your time zone.
    time.timeZone = "Europe/Paris";
 
@@ -32,11 +30,11 @@
 
   # Select internationalisation properties.
   # i18n.defaultLocale = "en_US.UTF-8";
-  #  console = {
-  #    font = "Lat2-Terminus16";
-  #    keyMap = "us";
-  #    useXkbConfig = true; # use xkb.options in tty.
-  #  };
+  # console = {
+  #   font = "Lat2-Terminus16";
+  #   keyMap = "us";
+  #   useXkbConfig = true; # use xkb.options in tty.
+  # };
 
   # Enable the X11 windowing system.
   # services.xserver.enable = true;
@@ -45,8 +43,8 @@
   
 
   # Configure keymap in X11
-   services.xserver.xkb.layout = "fr";
-   services.xserver.xkb.options = "eurosign:e,caps:escape";
+  # services.xserver.xkb.layout = "us";
+  # services.xserver.xkb.options = "eurosign:e,caps:escape";
 
   # Enable CUPS to print documents.
   # services.printing.enable = true;
@@ -63,7 +61,7 @@
   # services.libinput.enable = true;
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
-   users.users.pozender = {
+  users.users.pozender = {
      isNormalUser = true;
      extraGroups = [ "wheel" "docker" "sudo" ]; # Enable ‘sudo’ for the user.
      packages = with pkgs; [
@@ -115,40 +113,14 @@
   # Enable the OpenSSH daemon.
    services.openssh.enable = true;
 
-  # services.samba = {
-  #   enable = true;
-  #   securityType = "user";
-
-  # };
   # Open ports in the firewall.
   # networking.firewall.allowedTCPPorts = [ ... ];
   # networking.firewall.allowedUDPPorts = [ ... ];
   # Or disable the firewall altogether.
    networking.firewall.enable = false;
 
-  ## Jellyfin Service ###
-  services.jellyfin = {
-    user = "jellyfin";
-    enable = true;
-    
-  };
-  ### Jellyfin ###
 
-  ### Docker-compose strating ###
-  systemd.services.dockers-services = {
-    script = ''
-      ${pkgs.docker-compose}/bin/docker-compose -f /etc/nixos/docker-containers/docker-compose.yml up -d
-    '';
-    # wanted = [ "multi-user.target" ];
-    after = [ "docker.service" "docker.socket" ];
-  };
-  ### Docker-compose strating ###
-
-
-  ### Group Media ###
-  users.groups.media.members = [ "pozender" "jellyfin" ];
-
-  networking = {
+   networking = {
    useDHCP = false;
    interfaces = {
      "enp3s0" = {
@@ -162,7 +134,17 @@
    defaultGateway = "192.168.1.1";
    nameservers = [ "8.8.8.8" "8.8.4.4"];
   }; 
-  
+ 
+  ### Docker-compose strating ###
+  systemd.services.dockers-services = {
+    script = ''
+      ${pkgs.docker-compose}/bin/docker-compose -f /etc/nixos/docker-containers/docker-compose.yml up -d
+    '';
+     wantedBy = [ "multi-user.target" ];
+    after = [ "docker.service" "docker.socket" ];
+  };
+  ### Docker-compose strating ###
+
   ## Mounting FS ##
   fileSystems."/home/shares/public/medias1" = {
     device = "/dev/disk/by-uuid/dab8db95-59d5-4e46-bea4-22eba9ea419f";
@@ -176,23 +158,17 @@
   };
   ## Mounting FS ##
 
+  ## Jellyfin Service ###
+  services.jellyfin = {
+    user = "jellyfin";
+    enable = true;
+    
+  };
+  users.groups.media.members = [ "pozender" "jellyfin" ];
+   ### Jellyfin ###
 
-  # Copy the NixOS configuration file and link it from the resulting system
-  # (/run/current-system/configuration.nix). This is useful in case you
-  # accidentally delete configuration.nix.
-  # system.copySystemConfiguration = true;
-
-  # This option defines the first version of NixOS you have installed on this particular machine,
-  # and is used to maintain compatibility with application data (e.g. databases) created on older NixOS versions.
-  #
-  # Most users should NEVER change this value after the initial install, for any reason,
-  # even if you've upgraded your system to a new NixOS release.
-  #
-  # This value does NOT affect the Nixpkgs version your packages and OS are pulled from,
-  # so changing it will NOT upgrade your system - see https://nixos.org/manual/nixos/stable/#sec-upgrading for how
-  # to actually do that.
-  #
-  # This value being lower than the current NixOS release does NOT mean your system is
+ 
+ # This value being lower than the current NixOS release does NOT mean your system is
   # out of date, out of support, or vulnerable.
   #
   # Do NOT change this value unless you have manually inspected all the changes it would make to your configuration,
